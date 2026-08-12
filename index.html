@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>a very important quiz for My Babe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum-950:#211526;
+    --plum-900:#2b1c33;
+    --plum-800:#3a2743;
+    --peach:#ffb26b;
+    --rose:#ff6f91;
+    --sage:#a7bd93;
+    --cream:#f7ece1;
+    --cream-dim:#d8cbc0;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,178,107,0.10), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(255,111,145,0.12), transparent 50%),
+      var(--plum-950);
+    color:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+  }
+
+  .stage{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 18px;
+  }
+
+  .card{
+    width:100%;
+    max-width:560px;
+    background:linear-gradient(180deg, var(--plum-900), var(--plum-800));
+    border:1px solid rgba(255,178,107,0.18);
+    border-radius:22px;
+    padding:38px 34px 34px;
+    position:relative;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.6);
+    overflow:hidden;
+  }
+
+  .meter{
+    position:absolute;
+    top:-16px;
+    left:34px;
+    display:flex;
+    gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--plum-950);
+    background:var(--peach);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--sage);
+    margin:14px 0 10px;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(26px,5vw,36px);
+    line-height:1.15;
+    margin:0 0 6px;
+    color:var(--cream);
+  }
+
+  .sub{
+    color:var(--cream-dim);
+    font-size:15px;
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .opt{
+    text-align:left;
+    background:rgba(247,236,225,0.04);
+    border:1px solid rgba(247,236,225,0.14);
+    color:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:15px;
+    padding:14px 16px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .opt:hover{
+    border-color:var(--peach);
+    background:rgba(255,178,107,0.08);
+    transform:translateX(3px);
+  }
+  .opt:focus-visible{
+    outline:2px solid var(--peach);
+    outline-offset:2px;
+  }
+  .opt.selected{
+    border-color:var(--rose);
+    background:rgba(255,111,145,0.14);
+  }
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:rise .5s ease both; }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* the ask screen */
+  .ask-zone{
+    position:relative;
+    min-height:220px;
+    margin-top:10px;
+  }
+
+  .yes{
+    background:var(--rose);
+    color:var(--plum-950);
+    border:none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:17px;
+    padding:18px 30px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 10px 30px -10px rgba(255,111,145,0.6);
+  }
+  .yes:hover{ transform:translateY(-2px) scale(1.03); }
+
+  .no{
+    background:transparent;
+    color:var(--cream-dim);
+    border:1px solid rgba(247,236,225,0.25);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    padding:14px 20px;
+    border-radius:14px;
+    cursor:pointer;
+    position:absolute;
+    top:70px;
+    left:0;
+    transition:top .18s ease, left .18s ease;
+    touch-action:none;
+  }
+
+  .excuse{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--sage);
+    margin-top:10px;
+    min-height:16px;
+  }
+
+  /* when screen */
+  .field-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cream-dim);
+    margin:18px 0 8px;
+  }
+  .field-label:first-of-type{ margin-top:0; }
+
+  input[type="date"]{
+    width:100%;
+    background:rgba(247,236,225,0.04);
+    border:1px solid rgba(247,236,225,0.18);
+    color:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:15px;
+    padding:13px 14px;
+    border-radius:12px;
+    color-scheme:dark;
+  }
+  input[type="date"]:focus-visible{
+    outline:2px solid var(--peach);
+    outline-offset:2px;
+  }
+
+  .slot-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .slot{
+    background:rgba(247,236,225,0.04);
+    border:1px solid rgba(247,236,225,0.14);
+    color:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    padding:13px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .slot:hover{ border-color:var(--peach); background:rgba(255,178,107,0.08); }
+  .slot.selected{ border-color:var(--rose); background:rgba(255,111,145,0.14); }
+
+  .continue{
+    margin-top:26px;
+    width:100%;
+    background:var(--peach);
+    color:var(--plum-950);
+    border:none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:15px 20px;
+    border-radius:14px;
+    cursor:pointer;
+    opacity:0.4;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .15s ease;
+  }
+  .continue.ready{ opacity:1; pointer-events:auto; }
+  .continue.ready:hover{ transform:translateY(-2px); }
+
+  /* food grid */
+  .food-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .food{
+    background:rgba(247,236,225,0.04);
+    border:1px solid rgba(247,236,225,0.14);
+    color:var(--cream);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    padding:16px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    text-align:center;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .food:hover{ border-color:var(--peach); background:rgba(255,178,107,0.08); transform:translateY(-2px); }
+
+  /* reveal */
+  .reveal{ text-align:center; }
+  .reveal h1{ font-size:clamp(30px,6vw,44px); }
+  .reveal .sub{ font-size:16px; }
+  .plan{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--sage);
+    background:rgba(167,189,147,0.08);
+    border:1px solid rgba(167,189,147,0.25);
+    border-radius:12px;
+    padding:14px 16px;
+    margin:18px 0;
+    text-align:left;
+    line-height:1.7;
+  }
+
+  .confetti{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .piece{
+    position:absolute;
+    top:-10px;
+    border-radius:2px;
+    opacity:0.9;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); opacity:0.4; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen.active{ animation:none; }
+    .piece{ animation:none; display:none; }
+  }
+
+  footer{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:rgba(216,203,192,0.4);
+    margin-top:22px;
+    letter-spacing:0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="card">
+    <div class="meter" id="meter">round 1 / 3</div>
+
+    <!-- Round 1 -->
+    <div class="screen active" data-screen="1">
+      <p class="eyebrow">a short, extremely scientific quiz</p>
+      <h1>Hi Rashmi. Quick vibe check before we begin.</h1>
+      <p class="sub">Answer honestly. There are no wrong answers, only answers that lead to the next question.</p>
+      <div class="options">
+        <button class="opt" data-next="2">Iced coffee, obviously.</button>
+        <button class="opt" data-next="2">Chai, don't insult me.</button>
+        <button class="opt" data-next="2">Whatever's closest.</button>
+      </div>
+    </div>
+
+    <!-- Round 2 -->
+    <div class="screen" data-screen="2">
+      <p class="eyebrow">round 2 — hypothetical scenario</p>
+      <h1>Someone keeps finding excuses to text you. Red flag or okay flag?</h1>
+      <p class="sub">Think carefully. This question is not about anyone in particular.</p>
+      <div class="options">
+        <button class="opt" data-next="3">Depends who it is.</button>
+        <button class="opt" data-next="3">Okay flag, cautiously.</button>
+        <button class="opt" data-next="3">I want a name before I answer.</button>
+      </div>
+    </div>
+
+    <!-- Round 3 -->
+    <div class="screen" data-screen="3">
+      <p class="eyebrow">round 3 — final calibration</p>
+      <h1>Last one. Be honest, this one actually matters.</h1>
+      <p class="sub">On a scale of "meh" to "clear your Saturday," how do you feel about surprises?</p>
+      <div class="options">
+        <button class="opt" data-next="ask">Cautiously optimistic.</button>
+        <button class="opt" data-next="ask">Depends entirely on the surprise.</button>
+        <button class="opt" data-next="ask">Just ask me already.</button>
+      </div>
+    </div>
+
+    <!-- The Ask -->
+    <div class="screen" data-screen="ask">
+      <p class="eyebrow">results are in</p>
+      <h1>Rashmi, will you go on a date with me?</h1>
+      <p class="sub">Just so you know — the "No" button doesn't really work. It's more of a decoration.</p>
+      <div class="ask-zone" id="askZone">
+        <button class="yes" id="yesBtn">Yes</button>
+        <button class="no" id="noBtn">No</button>
+      </div>
+      <p class="excuse" id="excuse"></p>
+    </div>
+
+    <!-- When are you free -->
+    <div class="screen" data-screen="when">
+      <p class="eyebrow">step 2 — logistics</p>
+      <h1>When are you free?</h1>
+      <p class="sub">Pick a day and a time that works for you.</p>
+
+      <p class="field-label">Date</p>
+      <input type="date" id="dateInput" />
+
+      <p class="field-label">Time</p>
+      <div class="slot-grid" id="slotGrid">
+        <button class="slot" data-slot="Morning">Morning</button>
+        <button class="slot" data-slot="Afternoon">Afternoon</button>
+        <button class="slot" data-slot="Evening">Evening</button>
+        <button class="slot" data-slot="Night">Night</button>
+      </div>
+
+      <button class="continue" id="whenContinue">Continue</button>
+    </div>
+
+    <!-- Food -->
+    <div class="screen" data-screen="food">
+      <p class="eyebrow">step 3 — the important question</p>
+      <h1>What are you feeling?</h1>
+      <p class="sub">Pick one. This decides everything.</p>
+      <div class="food-grid" id="foodGrid">
+        <button class="food" data-food="Pizza">🍕 Pizza</button>
+        <button class="food" data-food="Burger">🍔 Burger</button>
+        <button class="food" data-food="Raghavendra Tiffins">polar bear-DBC</button>
+        <button class="food" data-food="Rakshit Tiffin">Meghana foods</button>
+        <button class="food" data-food="Momos">Masala Dosa</button>
+        <button class="food" data-food="Pasta">🍝 Pasta</button>
+        <button class="food" data-food="Chiluku Idli">Chiluku Idli</button>
+        <button class="food" data-food="Gulab Jamun">🍮 Gulab Jamun</button>
+      </div>
+    </div>
+
+    <!-- Reveal -->
+    <div class="screen reveal" data-screen="reveal">
+      <p class="eyebrow">it's a date</p>
+      <h1>Perfect. 🎉</h1>
+      <p class="sub">You just made my day, My Babe.</p>
+      <div class="plan" id="planSummary"></div>
+      <p class="sub" id="pickupLine">I'm coming to pick you up to Davanagere. Get ready 💛</p>
+    </div>
+
+    <footer>made for Prem, one round at a time</footer>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+  const screens = document.querySelectorAll('.screen');
+  const meter = document.getElementById('meter');
+
+  function showScreen(name){
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    if(name === '1' || name === '2' || name === '3'){
+      meter.textContent = `round ${name} / 3`;
+      meter.style.display = 'block';
+    } else {
+      meter.style.display = 'none';
+    }
+  }
+
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => showScreen(btn.dataset.next));
+  });
+
+  /* ---- The Ask: No button is unclickable, always escapes ---- */
+  const excuses = [
+    "nope, try again",
+    "that button is purely decorative",
+    "it's not going to let you",
+    "still dodging, as promised",
+    "at this point just click Yes"
+  ];
+  let dodge = 0;
+  const noBtn = document.getElementById('noBtn');
+  const excuseEl = document.getElementById('excuse');
+  const askZone = document.getElementById('askZone');
+
+  function moveNoButton(){
+    const zoneRect = askZone.getBoundingClientRect();
+    const maxX = Math.max(zoneRect.width - noBtn.offsetWidth - 8, 0);
+    const maxY = Math.max(zoneRect.height - noBtn.offsetHeight - 8, 0);
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    dodge = Math.min(dodge + 1, excuses.length - 1);
+    excuseEl.textContent = excuses[dodge];
+  }
+
+  // Desktop: dodge before the cursor even reaches it
+  askZone.addEventListener('mousemove', (e) => {
+    const r = noBtn.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if(dist < 70){ moveNoButton(); }
+  });
+
+  // Any attempt to interact with it just moves it — never triggers a "no"
+  ['pointerdown','pointerenter','touchstart','click'].forEach(evt => {
+    noBtn.addEventListener(evt, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      moveNoButton();
+    }, { passive:false });
+  });
+
+  document.getElementById('yesBtn').addEventListener('click', () => {
+    showScreen('when');
+  });
+
+  /* ---- When are you free ---- */
+  const dateInput = document.getElementById('dateInput');
+  const slotGrid = document.getElementById('slotGrid');
+  const whenContinue = document.getElementById('whenContinue');
+  let chosenDate = '';
+  let chosenSlot = '';
+
+  function checkWhenReady(){
+    if(chosenDate && chosenSlot){
+      whenContinue.classList.add('ready');
+    } else {
+      whenContinue.classList.remove('ready');
+    }
+  }
+
+  dateInput.addEventListener('change', () => {
+    chosenDate = dateInput.value;
+    checkWhenReady();
+  });
+
+  slotGrid.querySelectorAll('.slot').forEach(btn => {
+    btn.addEventListener('click', () => {
+      slotGrid.querySelectorAll('.slot').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      chosenSlot = btn.dataset.slot;
+      checkWhenReady();
+    });
+  });
+
+  whenContinue.addEventListener('click', () => {
+    if(chosenDate && chosenSlot){ showScreen('food'); }
+  });
+
+  /* ---- Food ---- */
+  const foodGrid = document.getElementById('foodGrid');
+  let chosenFood = '';
+
+  foodGrid.querySelectorAll('.food').forEach(btn => {
+    btn.addEventListener('click', () => {
+      chosenFood = btn.dataset.food;
+      buildPlan();
+      showScreen('reveal');
+      burstConfetti();
+    });
+  });
+
+  function formatDate(dstr){
+    if(!dstr) return '';
+    const d = new Date(dstr + 'T00:00:00');
+    return d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+  }
+
+  function buildPlan(){
+    const el = document.getElementById('planSummary');
+    el.innerHTML =
+      `Date: ${formatDate(chosenDate)}<br>` +
+      `Time: ${chosenSlot}<br>` +
+      `Food: ${chosenFood}`;
+  }
+
+  function burstConfetti(){
+    const holder = document.getElementById('confetti');
+    const colors = ['#ffb26b', '#ff6f91', '#a7bd93', '#f7ece1'];
+    for(let i = 0; i < 90; i++){
+      const p = document.createElement('div');
+      p.className = 'piece';
+      const size = 6 + Math.random() * 6;
+      p.style.width = size + 'px';
+      p.style.height = size * 0.4 + 'px';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+      p.style.animationDelay = (Math.random() * 0.6) + 's';
+      holder.appendChild(p);
+      setTimeout(() => p.remove(), 5000);
+    }
+  }
+</script>
+</body>
+</html>
